@@ -29,8 +29,8 @@ docs <- tm_map(docs, content_transformer(tolower))
 docs <- tm_map(docs, removePunctuation)
 
 # Remove special chars
-removeSpecials <- function(x) gsub(""."", "",x)
-docs <- tm_map(docs, removeSpecials)
+#removeSpecials <- function(x) gsub(".", "",x)
+#docs <- tm_map(docs, removeSpecials)
 
 # Remove numbers
 docs <- tm_map(docs, removeNumbers)
