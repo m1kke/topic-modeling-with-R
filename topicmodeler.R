@@ -1,10 +1,15 @@
-### Set up environment
+# Load libraries
+library(tm)
+library(topicmodels)
 
-library(tm) # for text mining
-library(topicmodels) # for LDA
+# Create variables
+dataDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/data"
 
 # Set working dir
-setwd("C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/data")
+setwd(dataDir)
+
+# Get filenames
+filenames <- list.files(dataDir)
 
 # Load files into Corpus
 docs <- Corpus(DirSource(getwd()))
@@ -14,6 +19,10 @@ docs <- tm_map(docs, content_transformer(tolower))
 
 # Remove punctuation
 docs <- tm_map(docs, removePunctuation)
+
+# Remove special chars
+removeSpecials <- function(x) gsub(""."", "",x)
+docs <- tm_map(docs, removeSpecials)
 
 # Remove numbers
 docs <- tm_map(docs, removeNumbers)
@@ -28,26 +37,8 @@ docs <- tm_map(docs, stripWhitespace)
 docs <- tm_map(docs, PlainTextDocument)
 
 # Create DTM
-
 dtm <- DocumentTermMatrix(docs)
-rownames(dtm) <- c("test.txt")
+rownames(dtm) <- filenames
 
 # Model topics
-
 ldaOut <-LDA(dtm, k = 3)
-
-ldaOut.topics <- as.matrix(topics(ldaOut))
-write.csv(ldaOut.topics,file=paste("LDAGibbs",k,"DocsToTopics.csv"))
-
-# Write data out
-# **************
-
-
---
-  
-  
-  Mikko Koskela
-
-mikkokoskela@kamk.fi
-
-0407490575
