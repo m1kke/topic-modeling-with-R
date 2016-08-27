@@ -1,0 +1,11 @@
+This file will be used as
+a test file that is going
+to be used during testing
+period for topic modeler
+R program. It is small,
+short, and uses different
+kinds of word, as well as
+numbers like 0241, dates
+8-24-2001 and special
+chars like!#. Lets get
+going!
