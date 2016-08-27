@@ -29,7 +29,7 @@ docs <- tm_map(docs, content_transformer(tolower))
 docs <- tm_map(docs, removePunctuation)
 
 # Remove special chars
-#removeSpecials <- function(x) gsub(".", "",x)
+#removeSpecials <- function(x) gsub("[^[:alnum:]]", "",x)
 #docs <- tm_map(docs, removeSpecials)
 
 # Remove numbers
@@ -38,6 +38,8 @@ docs <- tm_map(docs, removeNumbers)
 # Remove stopwords
 docs <- tm_map(docs, removeWords, stopwords("english"))
 docs <- tm_map(docs, removeWords, suomiStops)
+
+# *Possible stemming here*
 
 # Strip whitespace
 docs <- tm_map(docs, stripWhitespace)
