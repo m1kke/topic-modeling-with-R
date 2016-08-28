@@ -45,6 +45,7 @@ docs <- tm_map(docs, removeWords, suomiStops) #finnish by Heikki Hyppänen http:/
 docs <- tm_map(docs, removeWords, stopwords("swedish")) #swedish
 
 # Stem documents
+#docs <- tm_map(docs, stemDocument()) #or perhaps snowballc
 
 # Strip whitespace
 docs <- tm_map(docs, stripWhitespace)
