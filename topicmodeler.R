@@ -2,8 +2,14 @@
 library(tm)
 library(topicmodels)
 
+# Load finnish stopwords list
+# swedish words?
+
+# Load metadata and turn it into dataframe
+
 # Create variables
 dataDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/data"
+resultsDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/results"
 burnin <- 4000
 iter <- 2000
 thin <- 500
@@ -29,7 +35,7 @@ docs <- tm_map(docs, content_transformer(tolower))
 docs <- tm_map(docs, removePunctuation)
 
 # Remove special chars
-#removeSpecials <- function(x) gsub("[^[:alnum:]]", "",x)
+removeSpecials <- function(x) gsub("[^[:alnum:]]", "",x)
 #docs <- tm_map(docs, removeSpecials)
 
 # Remove numbers
@@ -39,7 +45,9 @@ docs <- tm_map(docs, removeNumbers)
 docs <- tm_map(docs, removeWords, stopwords("english"))
 docs <- tm_map(docs, removeWords, suomiStops)
 
-# *Possible stemming here*
+#swedish stopwords
+
+# Stem documents
 
 # Strip whitespace
 docs <- tm_map(docs, stripWhitespace)
@@ -53,4 +61,18 @@ rownames(dtm) <- filenames
 
 # Model topics
 ldaOut <-LDA(dtm,k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
+
+# Change workdir to results folder
+setwd(resultsDir)
+
+ldaOut.topics <- as.matrix(topics(ldaOut))
+write.csv(ldaOut.topics, file = paste("LDAGibbs", k, "DocsToTopics.csv"))
+ldaOut.terms <- as.matrix(terms(ldaOut, 6))
+write.csv(ldaOut.terms, file = paste("LDAGibbbs", k, "TopicsToTerms.csv"))
+topicProbabilities <- as.data.frame(ldaOut@gamma)
+write.csv(topicProbabilities, file = paste("LDAGibbs", k, "TopicProbabilities.csv"))
+topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k]/sort(topicProbabilities[x,])[k - 1])
+topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k - 1]/sort(topicProbabilities[x,])[k - 2])
+write.csv(topic1ToTopic2, file = paste("LDAGibbs", k, "Topic1ToTopic2.csv"))
+write.csv(topic2ToTopic3, file = paste("LDAGibbs", k, "Topic2ToTopic3.csv"))
 
