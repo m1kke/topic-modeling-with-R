@@ -35,17 +35,16 @@ docs <- tm_map(docs, content_transformer(tolower))
 docs <- tm_map(docs, removePunctuation)
 
 # Remove special chars
-removeSpecials <- function(x) gsub("[^[:alnum:]]", "",x)
+removeSpecials <- function(x) gsub("[^[:alnum:]]", "",x) # add exception for spaces
 #docs <- tm_map(docs, removeSpecials)
 
 # Remove numbers
 docs <- tm_map(docs, removeNumbers)
 
 # Remove stopwords
-docs <- tm_map(docs, removeWords, stopwords("english"))
-docs <- tm_map(docs, removeWords, suomiStops)
-
-#swedish stopwords
+docs <- tm_map(docs, removeWords, stopwords("english")) #english
+docs <- tm_map(docs, removeWords, suomiStops) #finnish by Heikki Hyppänen http://www.nettiapina.fi/wp-content/uploads/2007/04/fi_stopwords.txt
+docs <- tm_map(docs, removeWords, stopwords("swedish")) #swedish
 
 # Stem documents
 
