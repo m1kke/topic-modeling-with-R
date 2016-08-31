@@ -43,6 +43,8 @@ docs <- tm_map(docs, PlainTextDocument) # Turn into plaintext document
 
 # Create DTM
 dtm <- DocumentTermMatrix(docs)
+rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
+dtm.new   <- dtm[rowTotals> 0, ] 
 rownames(dtm) <- filenames
 
 # Mining the corpus
@@ -74,7 +76,7 @@ wordcloud(names(freqr), freqr, min.freq = 30, colors = brewer.pal(6, "Dark2"))
 
 
 # Model topics
-ldaOut <-LDA(dtm,k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
+ldaOut <-LDA(dtm.new,k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
 
 # Change workdir to results folder
 setwd(resultsDir)
