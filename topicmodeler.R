@@ -51,18 +51,17 @@ dtm = dtm[rows.sum > 0, ] # tai dtm[rows.sum > 0, ]
 # Model topics
 ldaOut <-LDA(dtm, k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
 
-# Change workdir to results folder
-setwd(resultsDir)
-
-ldaOut.topics <- as.matrix(topics(ldaOut)) #could be tuned
+ldaOut.topics <- as.matrix(topics(ldaOut))
 
 ldaOut.terms <- as.matrix(terms(ldaOut, termNum))
 
+# Calculate probabilities
 topicProbabilities <- as.data.frame(ldaOut@gamma)
-
 topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k]/sort(topicProbabilities[x,])[k - 1])
-
 topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k - 1]/sort(topicProbabilities[x,])[k - 2])
+
+# Change workdir to results folder
+setwd(resultsDir)
 
 # Write results to CSVs
 write.csv(ldaOut.topics, file = paste("LDA - K", k, "DocsToTopics.csv", sep = " "))
