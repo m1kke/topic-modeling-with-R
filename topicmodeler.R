@@ -75,26 +75,3 @@ wordcloud(names(freqr), freqr, min.freq = 35)
 wordcloud(names(freqr), freqr, min.freq = 30, colors = brewer.pal(6, "Dark2"))
 
 
-# Model topics
-ldaOut <-LDA(dtm.new,k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
-
-# Change workdir to results folder
-setwd(resultsDir)
-
-ldaOut.topics <- as.matrix(topics(ldaOut)) #could be tuned
-
-ldaOut.terms <- as.matrix(terms(ldaOut, 5))
-
-topicProbabilities <- as.data.frame(ldaOut@gamma)
-
-topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k]/sort(topicProbabilities[x,])[k - 1])
-
-topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k - 1]/sort(topicProbabilities[x,])[k - 2])
-
-
-# Write results to CSVs
-write.csv(ldaOut.topics, file = paste("LDA - K", k, "DocsToTopics.csv", sep = " "))
-write.csv(ldaOut.terms, file = paste("LDA - K", k, "TopicsToTerms.csv"))
-write.csv(topicProbabilities, file = paste("LDA - K", k, "TopicProbabilities.csv"))
-write.csv(topic1ToTopic2, file = paste("LDA - K", k, "Topic1ToTopic2.csv"))
-write.csv(topic2ToTopic3, file = paste("LDA - K", k, "Topic2ToTopic3.csv"))
