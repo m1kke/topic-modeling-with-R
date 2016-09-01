@@ -47,34 +47,6 @@ rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
 dtm.new   <- dtm[rowTotals> 0, ] 
 rownames(dtm) <- filenames
 
-# Mining the corpus
-freq <- colSums(as.matrix(dtm))
-length(freq)
-ord <- order(freq, decreasing = T)
-freq[head(ord)]
-freq[tail(ord)]
-dtmr <- DocumentTermMatrix(docs, control = list(wordLengths = c(4, 20), bounds = list(global = c(3, 27))))
-dtmr
-freqr <- colSums(as.matrix(dtmr))
-length(freqr)
-ordr <- order(freqr, decreasing = T)
-freqr[head(ordr)]
-freqr[tail(ord)]
-
-findFreqTerms(dtmr, lowfreq = 80)
-findAssocs(dtmr, "koulutuksen", 0.6)
-wf = data.frame(term=names(freqr), occurrences = freqr)
-
-p <- ggplot(subset(wf, freqr < 100), aes(term, occurrences))
-p <- p + geom_bar(stat = "identity")
-p <- p + theme(axis.text.x = element_text(angle = 45, hjust = 1))
-p
-
-set.seed(42)
-wordcloud(names(freqr), freqr, min.freq = 35)
-wordcloud(names(freqr), freqr, min.freq = 30, colors = brewer.pal(6, "Dark2"))
-
-
 # Model topics
 ldaOut <-LDA(dtm.new,k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
 
@@ -90,7 +62,6 @@ topicProbabilities <- as.data.frame(ldaOut@gamma)
 topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k]/sort(topicProbabilities[x,])[k - 1])
 
 topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k - 1]/sort(topicProbabilities[x,])[k - 2])
-
 
 # Write results to CSVs
 write.csv(ldaOut.topics, file = paste("LDA - K", k, "DocsToTopics.csv", sep = " "))
