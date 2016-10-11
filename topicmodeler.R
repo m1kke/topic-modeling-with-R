@@ -2,6 +2,7 @@
 library(tm) # for text mining
 library(topicmodels) # for for topic modeling
 library(SnowballC) # for stemming
+library(textcat) # for language detection
 
 # Create variables
 #dataDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/data"
@@ -22,11 +23,45 @@ removeSpecials <- function(x) gsub("[^0-9a-zA-ZäÄöÖåÅ ]", "", x) # function to r
 # Set working dir to load data
 setwd(dataDir)
 
-# Get filenames
+# Remove empty documents so they don't cause problems later
+a <- dir(dataDir)
+emptya <- a[file.info(a)[["size"]] == 0]
+unlink(emptya)
+
+#Get filenames
 filenames <- list.files(dataDir)
 
 # Load files into Corpus
 docs <- Corpus(DirSource(getwd()))
+
+# Detect document language and save it into the metadata
+# unique used for weird bug in swedish
+for (i in 1:length(docs)) {
+  cat(i,". dokumentin kieli on: \n")
+  rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
+  print(rownames(rowname)[1])
+  #print(sort(textcat(docs[[i]]$content), decreasing=T))
+  #docs[[i]]$meta$language = sort(textcat(docs[[1]]$content), decreasing=T)[1]
+  #cat(i, ". dokumentin kielet ovat", sort(textcat(docs[[1]]$content), decreasing=T), "\n")
+}
+
+# Loop through documents to list all found languages, extract unique languages
+lanlist <- list()
+for (i in 1:length(docs)) { lanlist[i] <- docs[[i]]$meta$language }
+unilist <- unique(lanlist)
+
+# Create a corpus for each unique language
+corplist <- list()
+for (j in 1:length(unilist)){
+  assign(paste0(unilist[j], ".corp"), tm_filter(docs, FUN = function(x) meta(x)[["language"]] == unilist[j]))
+  corplist[j] <- paste0(unilist[j], ".corp")
+}
+
+for(h in corplist) {
+  # Topic modeling here
+  
+  
+}
 
 # Clean data
 docs <- tm_map(docs, content_transformer(tolower)) # Convert to lower case
