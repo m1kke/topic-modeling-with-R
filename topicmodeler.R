@@ -5,20 +5,19 @@ library(SnowballC) # for stemming
 library(textcat) # for language detection
 
 # Create variables
-#dataDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/data"
-#resultsDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R/results"
-dataDir <- "C:/Users/mikkok/Downloads/csc-dataproject/topic-modeling-with-R/data"
-resultsDir <- "C:/Users/mikkok/Downloads/csc-dataproject/topic-modeling-with-R/results"
+dataDir <- "C:/Users/mikkok/Desktop/topic-modeling-with-R/data"
+resultsDir <- "C:/Users/mikkok/Desktop/topic-modeling-with-R/results"
 burnin <- 4000
 iter <- 2000
 thin <- 500
 seed <-list(2003,5,63,100001,765)
 nstart <- 5
 best <- TRUE
-k <- 5 # number of topics
+#k <- 5 # number of topics
 termNum <- 5 # number of terms per topic
 suomiStops <- c("aina", "alla", "ehkä", "eivät", "emme", "en", "enemmän", "ennen", "et", "että", "ette", "hän", "häneen", "hänellä", "hänelle", "häneltä", "hänen", "hänessä", "hänestä", "hänet", "häntä", "he", "heidän", "heidät", "heihin", "heillä", "heille", "heiltä", "heissä", "heistä", "heitä", "hlö", "hlöä", "oikein", "http", "hyvin", "ilman", "itse", "ja", "jälkeen", "johon", "joiden", "joihin", "joiksi", "joilla", "joille", "joilta", "joina", "joissa", "joista", "joita", "joka", "joka", "joksi", "jolla", "jolle", "jolta", "jona", "jonka", "jos", "jossa", "josta", "jota", "jotka", "kai", "kaikki", "kanssa", "kaukana", "keiden", "keihin", "keiksi", "keillä", "keille", "keiltä", "keinä", "keissä", "keistä", "keitä", "keneen", "keneksi", "kenellä", "kenelle", "keneltä", "kenen", "kenenä", "kenessä", "kenestä", "kenet", "kenties", "keskellä", "kesken", "ketä", "ketkä", "ketkä", "koska", "koskaan", "kuin", "kuinka", "kuka", "kun", "kyllä", "lähellä", "läpi", "liian", "lla", "luona", "me", "meidän", "meidät", "meihin", "meillä", "meille", "meiltä", "meissä", "meistä", "meitä", "mihin", "mikä", "miksi", "millä", "mille", "milloin", "milloinkaan", "miltä", "minä", "minkä", "minua", "minulla", "minulle", "minulta", "minun", "minussa", "minusta", "minut", "minuun", "missä", "mistä", "mitä", "miten", "mitkä", "mukaan", "mutta", "muut", "näiden", "näihin", "näiksi", "näillä", "näille", "näiltä", "näinä", "näissä", "näistä", "näitä", "nämä", "ne", "niiden", "niihin", "niiksi", "niillä", "niille", "niiltä", "niin", "niinä", "niissä", "niistä", "niitä", "noiden", "noihin", "noiksi", "noilla", "noille", "noilta", "noin", "noina", "noissa", "noista", "noita", "nopeasti", "nuo", "nyt", "oikea", "oikealla", "ole", "olemme", "olen", "olet", "olette", "oli", "olimme", "olin", "olisi", "olisimme", "olisin", "olisit", "olisitte", "olisivat", "olit", "olitte", "olivat", "olla", "olleet", "ollut", "on", "ovat", "paljon", "poikki", "puh", "saa", "saada", "se", "sekä", "sen", "siellä", "siihen", "siinä", "siitä", "siksi", "sillä", "sille", "siltä", "sinä", "sinua", "sinulla", "sinulle", "sinulta", "sinun", "sinussa", "sinusta", "sinut", "sinuun", "sitä", "ssa", "sta", "suoraan", "tähän", "tai", "takana", "takia", "täksi", "tällä", "tälle", "tältä", "tämä", "tämän", "tänä", "tässä", "tästä", "tätä", "te", "teidän", "teidät", "teihin", "teillä", "teille", "teiltä", "teissä", "teistä", "teitä", "tms", "tuo", "tuoda", "tuohon", "tuoksi", "tuolla", "tuolle", "tuolta", "tuon", "tuona", "tuossa", "tuosta", "tuota", "vaan", "vähän", "vähemmän", "vai", "vain", "vaikka", "vasen", "vasemmalla", "vastan", "vielä", "vieressä", "voi", "voida", "voit", "www", "yhdessä", "yli", "ylös", "yms", "com", "fax", "klo", "myös", "muuta", "viim", "asti", "sis", "koko", "alle", "joskus", "sivu", "paitsi", "sitten", "tule", "auki", "paras", "lue", "lisää", "joko", "ihan", "saat", "ei", "html") # finnish stopwords
 removeSpecials <- function(x) gsub("[^0-9a-zA-ZäÄöÖåÅ ]", "", x) # function to remove special chars
+kNum <- 2
 
 # Set working dir to load data
 setwd(dataDir)
@@ -34,33 +33,10 @@ filenames <- list.files(dataDir)
 # Load files into Corpus
 docs <- Corpus(DirSource(getwd()))
 
-# Detect document language and save it into the metadata
-# unique used for weird bug in swedish
-for (i in 1:length(docs)) {
-  cat(i,". dokumentin kieli on: \n")
-  rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
-  print(rownames(rowname)[1])
-  #print(sort(textcat(docs[[i]]$content), decreasing=T))
-  #docs[[i]]$meta$language = sort(textcat(docs[[1]]$content), decreasing=T)[1]
-  #cat(i, ". dokumentin kielet ovat", sort(textcat(docs[[1]]$content), decreasing=T), "\n")
-}
+# Save filenames in heading metadata
 
-# Loop through documents to list all found languages, extract unique languages
-lanlist <- list()
-for (i in 1:length(docs)) { lanlist[i] <- docs[[i]]$meta$language }
-unilist <- unique(lanlist)
-
-# Create a corpus for each unique language
-corplist <- list()
-for (j in 1:length(unilist)){
-  assign(paste0(unilist[j], ".corp"), tm_filter(docs, FUN = function(x) meta(x)[["language"]] == unilist[j]))
-  corplist[j] <- paste0(unilist[j], ".corp")
-}
-
-for(h in corplist) {
-  # Topic modeling here
-  
-  
+for (doc in 1:length(docs)) {
+  docs[[doc]]$meta$heading <- filenames[doc]
 }
 
 # Clean data
@@ -75,32 +51,73 @@ docs <- tm_map(docs, stemDocument) # Stem documents
 docs <- tm_map(docs, stripWhitespace) # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument) # Turn into plaintext document
 
-# Create DTM
-dtm <- DocumentTermMatrix(docs)
-rownames(dtm) <- filenames
+# Detect document language and save it into the metadata
+# unique used for weird bug in swedish
+for (i in 1:length(docs)) {
+  rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
+  if (!is.table(rowname)) {
+    rowname <- attr(rowname, "names")
+    docs[[i]]$meta$language = rowname
+  }
+  else {
+    docs[[i]]$meta$language = rownames(rowname)[1]
+  }
+}
+
+# Loop through documents to list all found languages, extract unique languages
+lanlist <- list()
+for (i in 1:length(docs)) { lanlist[i] <- docs[[i]]$meta$language }
+unilist <- unique(lanlist)
+
+# Create a corpus for each unique language
+corplist <- list()
+for (j in 1:length(unilist)){
+  assign(paste0(unilist[j], ".corp"), tm_filter(docs, FUN = function(x) meta(x)[["language"]] == unilist[j]))
+  corplist[j] <- paste0(unilist[j], ".corp")
+}
+
+# Change workdir to results folder
+setwd(resultsDir)
+
+# Topic modeling
+for(h in corplist) {
+  korpus = get(h)
+  dtm <- DocumentTermMatrix(korpus)
+  
+  # Create headings list
+  headings <- vector(mode="character", length = length(korpus))
+  for (o in 1:length(korpus)) {
+    headings[[o]] <- korpus[[o]]$meta$heading #wtf why double brackets!?
+  }
+  
+  #Turn headings into rownames
+  rownames(dtm) <- headings
+  
+  #Topic Modeling
+  for (k in 1:kNum) {
+    for (term in 1:termNum) {
+      x <- assign(paste0("ldaOut-", h, "-k", k), LDA(dtm, k, method="Gibbs", control=list(nstart=nstart, seed = seed, best = best, burnin = burnin, iter = iter, thin=thin)))
+      x.topics <- assign(paste0("ldaOut-", h, "-", k, ".topics"), as.matrix(topics(x)))
+      x.terms <- assign(paste0("ldaOut-", h, "-", term, ".terms"), as.matrix(terms(x, term)))
+      
+      write.csv(x.topics, file = paste("LDA - Topics ", k, " - Terms ", term, "- DocsToTopics.csv", sep = " "))
+      write.csv(x.terms, file = paste("LDA - K", k, "TopicsToTerms.csv"))
+      
+    }
+  }
+}
+
 
 # Remove empty documents from corpus to prevent errors during modeling
-rows.sum = apply(dtm, 1, sum)
-dtm = dtm[rows.sum > 0, ] # tai dtm[rows.sum > 0, ]
-
-# Model topics
-ldaOut <-LDA(dtm, k, method="Gibbs", control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
-
-ldaOut.topics <- as.matrix(topics(ldaOut))
-
-ldaOut.terms <- as.matrix(terms(ldaOut, termNum))
+#rows.sum = apply(dtm, 1, sum)
+#dtm = dtm[rows.sum > 0, ] # tai dtm[rows.sum > 0, ]
 
 # Calculate probabilities
 topicProbabilities <- as.data.frame(ldaOut@gamma)
 topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k]/sort(topicProbabilities[x,])[k - 1])
 topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(topicProbabilities[x,])[k - 1]/sort(topicProbabilities[x,])[k - 2])
 
-# Change workdir to results folder
-setwd(resultsDir)
-
 # Write results to CSVs
-write.csv(ldaOut.topics, file = paste("LDA - K", k, "DocsToTopics.csv", sep = " "))
-write.csv(ldaOut.terms, file = paste("LDA - K", k, "TopicsToTerms.csv"))
 write.csv(topicProbabilities, file = paste("LDA - K", k, "TopicProbabilities.csv"))
 write.csv(topic1ToTopic2, file = paste("LDA - K", k, "Topic1ToTopic2.csv"))
 write.csv(topic2ToTopic3, file = paste("LDA - K", k, "Topic2ToTopic3.csv"))
