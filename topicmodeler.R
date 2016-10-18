@@ -4,6 +4,9 @@ library(topicmodels) # for for topic modeling
 library(SnowballC) # for stemming
 library(textcat) # for language detection
 library(wordcloud) # for wordclouds
+library(grid)
+library(gridExtra)
+library(gridBase)
 
 # Create variables
 dataDir <- "C:/Users/mikkok/Desktop/topic-modeling-with-R/data"
@@ -86,7 +89,7 @@ for(h in corplist) {
   # Create headings list
   headings <- vector(mode="character", length = length(korpus))
   for (o in 1:length(korpus)) {
-    headings[[o]] <- korpus[[o]]$meta$heading #wtf why double brackets!?
+    headings[[o]] <- korpus[[o]]$meta$heading
   }
   
   #Turn headings into rownames
@@ -100,7 +103,7 @@ for(h in corplist) {
       x.terms <- assign(paste0("ldaOut-", h, "-k", k, "-t", t, ".terms"), as.matrix(terms(x, t)))
       write.csv(x.topics, file = paste("LDA - ", h, "-", k, "topics-", t, "terms - DocsToTopics.csv", sep = " "))
       write.csv(x.terms, file = paste("LDA - ", h, "-", k, "topics-", t, "terms - TopicsToTerms.csv"))
-      # luo jokaiselle termimatriisin kolumnille oma wordcloud ja sijoita se gridiin, tallenna grid kuvaksi tai pdf:ksi
+      
     }
   }
 }
