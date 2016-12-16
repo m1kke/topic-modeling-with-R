@@ -7,6 +7,7 @@ library(wordcloud) # for wordclouds
 library(XLConnect) # for reading excel (xlsx doesnt get dates right)
 
 # Create variables
+baseDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R"
 dataDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/data"
 resultsDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/results"
 metaDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R"
