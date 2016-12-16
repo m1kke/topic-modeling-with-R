@@ -17,8 +17,8 @@ seed <-list(2003,5,63,100001,765)
 nstart <- 5
 best <- TRUE
 t <- 7 # number of terms per topic
-suomiStops <- c("aina", "alla", "ehkä", "eivät", "emme", "en", "enemmän", "ennen", "et", "että", "ette", "hän", "häneen", "hänellä", "hänelle", "häneltä", "hänen", "hänessä", "hänestä", "hänet", "häntä", "he", "heidän", "heidät", "heihin", "heillä", "heille", "heiltä", "heissä", "heistä", "heitä", "hlö", "hlöä", "oikein", "http", "hyvin", "ilman", "itse", "ja", "jälkeen", "johon", "joiden", "joihin", "joiksi", "joilla", "joille", "joilta", "joina", "joissa", "joista", "joita", "joka", "joka", "joksi", "jolla", "jolle", "jolta", "jona", "jonka", "jos", "jossa", "josta", "jota", "jotka", "kai", "kaikki", "kanssa", "kaukana", "keiden", "keihin", "keiksi", "keillä", "keille", "keiltä", "keinä", "keissä", "keistä", "keitä", "keneen", "keneksi", "kenellä", "kenelle", "keneltä", "kenen", "kenenä", "kenessä", "kenestä", "kenet", "kenties", "keskellä", "kesken", "ketä", "ketkä", "ketkä", "koska", "koskaan", "kuin", "kuinka", "kuka", "kun", "kyllä", "lähellä", "läpi", "liian", "lla", "luona", "me", "meidän", "meidät", "meihin", "meillä", "meille", "meiltä", "meissä", "meistä", "meitä", "mihin", "mikä", "miksi", "millä", "mille", "milloin", "milloinkaan", "miltä", "minä", "minkä", "minua", "minulla", "minulle", "minulta", "minun", "minussa", "minusta", "minut", "minuun", "missä", "mistä", "mitä", "miten", "mitkä", "mukaan", "mutta", "muut", "näiden", "näihin", "näiksi", "näillä", "näille", "näiltä", "näinä", "näissä", "näistä", "näitä", "nämä", "ne", "niiden", "niihin", "niiksi", "niillä", "niille", "niiltä", "niin", "niinä", "niissä", "niistä", "niitä", "noiden", "noihin", "noiksi", "noilla", "noille", "noilta", "noin", "noina", "noissa", "noista", "noita", "nopeasti", "nuo", "nyt", "oikea", "oikealla", "ole", "olemme", "olen", "olet", "olette", "oli", "olimme", "olin", "olisi", "olisimme", "olisin", "olisit", "olisitte", "olisivat", "olit", "olitte", "olivat", "olla", "olleet", "ollut", "on", "ovat", "paljon", "poikki", "puh", "saa", "saada", "se", "sekä", "sen", "siellä", "siihen", "siinä", "siitä", "siksi", "sillä", "sille", "siltä", "sinä", "sinua", "sinulla", "sinulle", "sinulta", "sinun", "sinussa", "sinusta", "sinut", "sinuun", "sitä", "ssa", "sta", "suoraan", "tähän", "tai", "takana", "takia", "täksi", "tällä", "tälle", "tältä", "tämä", "tämän", "tänä", "tässä", "tästä", "tätä", "te", "teidän", "teidät", "teihin", "teillä", "teille", "teiltä", "teissä", "teistä", "teitä", "tms", "tuo", "tuoda", "tuohon", "tuoksi", "tuolla", "tuolle", "tuolta", "tuon", "tuona", "tuossa", "tuosta", "tuota", "vaan", "vähän", "vähemmän", "vai", "vain", "vaikka", "vasen", "vasemmalla", "vastan", "vielä", "vieressä", "voi", "voida", "voit", "www", "yhdessä", "yli", "ylös", "yms", "com", "fax", "klo", "myös", "muuta", "viim", "asti", "sis", "koko", "alle", "joskus", "sivu", "paitsi", "sitten", "tule", "auki", "paras", "lue", "lisää", "joko", "ihan", "saat", "ei", "html") # finnish stopwords
-removeSpecials <- function(x) gsub("[^0-9a-zA-ZäÄöÖåÅ ]", "", x) # function to remove special chars
+suomiStops <- c("aina", "alla", "ehkÃ¤", "eivÃ¤t", "emme", "en", "enemmÃ¤n", "ennen", "et", "ettÃ¤", "ette", "hÃ¤n", "hÃ¤neen", "hÃ¤nellÃ¤", "hÃ¤nelle", "hÃ¤neltÃ¤", "hÃ¤nen", "hÃ¤nessÃ¤", "hÃ¤nestÃ¤", "hÃ¤net", "hÃ¤ntÃ¤", "he", "heidÃ¤n", "heidÃ¤t", "heihin", "heillÃ¤", "heille", "heiltÃ¤", "heissÃ¤", "heistÃ¤", "heitÃ¤", "hlÃ¶", "hlÃ¶Ã¤", "oikein", "http", "hyvin", "ilman", "itse", "ja", "jÃ¤lkeen", "johon", "joiden", "joihin", "joiksi", "joilla", "joille", "joilta", "joina", "joissa", "joista", "joita", "joka", "joka", "joksi", "jolla", "jolle", "jolta", "jona", "jonka", "jos", "jossa", "josta", "jota", "jotka", "kai", "kaikki", "kanssa", "kaukana", "keiden", "keihin", "keiksi", "keillÃ¤", "keille", "keiltÃ¤", "keinÃ¤", "keissÃ¤", "keistÃ¤", "keitÃ¤", "keneen", "keneksi", "kenellÃ¤", "kenelle", "keneltÃ¤", "kenen", "kenenÃ¤", "kenessÃ¤", "kenestÃ¤", "kenet", "kenties", "keskellÃ¤", "kesken", "ketÃ¤", "ketkÃ¤", "ketkÃ¤", "koska", "koskaan", "kuin", "kuinka", "kuka", "kun", "kyllÃ¤", "lÃ¤hellÃ¤", "lÃ¤pi", "liian", "lla", "luona", "me", "meidÃ¤n", "meidÃ¤t", "meihin", "meillÃ¤", "meille", "meiltÃ¤", "meissÃ¤", "meistÃ¤", "meitÃ¤", "mihin", "mikÃ¤", "miksi", "millÃ¤", "mille", "milloin", "milloinkaan", "miltÃ¤", "minÃ¤", "minkÃ¤", "minua", "minulla", "minulle", "minulta", "minun", "minussa", "minusta", "minut", "minuun", "missÃ¤", "mistÃ¤", "mitÃ¤", "miten", "mitkÃ¤", "mukaan", "mutta", "muut", "nÃ¤iden", "nÃ¤ihin", "nÃ¤iksi", "nÃ¤illÃ¤", "nÃ¤ille", "nÃ¤iltÃ¤", "nÃ¤inÃ¤", "nÃ¤issÃ¤", "nÃ¤istÃ¤", "nÃ¤itÃ¤", "nÃ¤mÃ¤", "ne", "niiden", "niihin", "niiksi", "niillÃ¤", "niille", "niiltÃ¤", "niin", "niinÃ¤", "niissÃ¤", "niistÃ¤", "niitÃ¤", "noiden", "noihin", "noiksi", "noilla", "noille", "noilta", "noin", "noina", "noissa", "noista", "noita", "nopeasti", "nuo", "nyt", "oikea", "oikealla", "ole", "olemme", "olen", "olet", "olette", "oli", "olimme", "olin", "olisi", "olisimme", "olisin", "olisit", "olisitte", "olisivat", "olit", "olitte", "olivat", "olla", "olleet", "ollut", "on", "ovat", "paljon", "poikki", "puh", "saa", "saada", "se", "sekÃ¤", "sen", "siellÃ¤", "siihen", "siinÃ¤", "siitÃ¤", "siksi", "sillÃ¤", "sille", "siltÃ¤", "sinÃ¤", "sinua", "sinulla", "sinulle", "sinulta", "sinun", "sinussa", "sinusta", "sinut", "sinuun", "sitÃ¤", "ssa", "sta", "suoraan", "tÃ¤hÃ¤n", "tai", "takana", "takia", "tÃ¤ksi", "tÃ¤llÃ¤", "tÃ¤lle", "tÃ¤ltÃ¤", "tÃ¤mÃ¤", "tÃ¤mÃ¤n", "tÃ¤nÃ¤", "tÃ¤ssÃ¤", "tÃ¤stÃ¤", "tÃ¤tÃ¤", "te", "teidÃ¤n", "teidÃ¤t", "teihin", "teillÃ¤", "teille", "teiltÃ¤", "teissÃ¤", "teistÃ¤", "teitÃ¤", "tms", "tuo", "tuoda", "tuohon", "tuoksi", "tuolla", "tuolle", "tuolta", "tuon", "tuona", "tuossa", "tuosta", "tuota", "vaan", "vÃ¤hÃ¤n", "vÃ¤hemmÃ¤n", "vai", "vain", "vaikka", "vasen", "vasemmalla", "vastan", "vielÃ¤", "vieressÃ¤", "voi", "voida", "voit", "www", "yhdessÃ¤", "yli", "ylÃ¶s", "yms", "com", "fax", "klo", "myÃ¶s", "muuta", "viim", "asti", "sis", "koko", "alle", "joskus", "sivu", "paitsi", "sitten", "tule", "auki", "paras", "lue", "lisÃ¤Ã¤", "joko", "ihan", "saat", "ei", "html") # finnish stopwords
+removeSpecials <- function(x) gsub("[^0-9a-zA-ZÃ¤Ã„Ã¶Ã–Ã¥Ã… ]", "", x) # function to remove special chars
 k <- 4 # number of topics
 
 # Ladataan metadata-excel
@@ -47,7 +47,7 @@ docs <- tm_map(docs, removePunctuation) # Remove punctuation
 docs <- tm_map(docs, removeSpecials) # Remove special chars
 docs <- tm_map(docs, removeNumbers) # Remove numbers
 docs <- tm_map(docs, removeWords, stopwords("english")) # Remove english stopwords
-docs <- tm_map(docs, removeWords, suomiStops) # Remove finnish stopwords (by Heikki Hyppänen http://www.nettiapina.fi/wp-content/uploads/2007/04/fi_stopwords.txt)
+docs <- tm_map(docs, removeWords, suomiStops) # Remove finnish stopwords (by Heikki HyppÃ¤nen http://www.nettiapina.fi/wp-content/uploads/2007/04/fi_stopwords.txt)
 docs <- tm_map(docs, removeWords, stopwords("swedish")) # Remove swedish stopwords
 docs <- tm_map(docs, stemDocument) # Stem documents
 docs <- tm_map(docs, stripWhitespace) # Strip whitespace
@@ -115,7 +115,7 @@ for(h in corplist) {
   write.csv(x.topic1ToTopic2, file = paste(h, "-", k, "topics -", t, "terms - Topic1 To Topic2.csv"))
   write.csv(x.topic2ToTopic3, file = paste(h, "-", k, "topics -", t, "terms - Topic2 To Topic3.csv"))
   
-  # Luodaan dataframe, johon tallennetaan dokumentin nimi ja todennäköisyydet, tallennetaan se muuttujaan
+  # Luodaan dataframe, johon tallennetaan dokumentin nimi ja todennÃ¤kÃ¶isyydet, tallennetaan se muuttujaan
   df <- as.data.frame(x@documents)
   colnames(df) <- "Dokumentti"
   for (i in 1:length(x@documents)) {
@@ -138,18 +138,18 @@ for(h in corplist) {
   #posterior(`finnish.corp-k4`)$terms
 }
 
-# Yhdistä topic + probability data framet
+# YhdistÃ¤ topic + probability data framet
 topicprob <- rbind(finnish.corp_df, english.corp_df, swedish.corp_df)
-write.csv(topicprob, file = "Kaikki kielet - Dokumentit ja todennäköisyydet.csv")
+write.csv(topicprob, file = "Kaikki kielet - Dokumentit ja todennÃ¤kÃ¶isyydet.csv")
 
-# Tallenna yksittäiset topicprobit
-write.csv(english.corp_df, file = "english.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
-write.csv(finnish.corp_df, file = "finnish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
-write.csv(swedish.corp_df, file = "swedish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
+# Tallenna yksittÃ¤iset topicprobit
+write.csv(english.corp_df, file = "english.corp - Dokumentit ja todennÃ¤kÃ¶isyydet (Topic Probabilities).csv")
+write.csv(finnish.corp_df, file = "finnish.corp - Dokumentit ja todennÃ¤kÃ¶isyydet (Topic Probabilities).csv")
+write.csv(swedish.corp_df, file = "swedish.corp - Dokumentit ja todennÃ¤kÃ¶isyydet (Topic Probabilities).csv")
 
-# Yhdistä topicprob dokumenttien metadataan
+# YhdistÃ¤ topicprob dokumenttien metadataan
 full_metadata <- merge(x = metadata, y = topicprob, by.x = "tiedostonnimi.txt", by.y = "Dokumentti", all.x = T)
 
-# Tallenna täysi metadata
+# Tallenna tÃ¤ysi metadata
 library(xlsx) # for writing excel
 write.xlsx(full_metadata, "Full Metadata (unclean).xlsx", showNA = F)
