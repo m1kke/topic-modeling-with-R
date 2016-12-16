@@ -4,9 +4,6 @@ library(topicmodels) # for for topic modeling
 library(SnowballC) # for stemming
 library(textcat) # for language detection
 library(wordcloud) # for wordclouds
-library(grid)
-library(gridExtra)
-library(gridBase)
 
 # Create variables
 dataDir <- "C:/Users/mikkok/Desktop/topic-modeling-with-R/data"
@@ -20,7 +17,7 @@ best <- TRUE
 termNum <- 7 # number of terms per topic
 suomiStops <- c("aina", "alla", "ehkä", "eivät", "emme", "en", "enemmän", "ennen", "et", "että", "ette", "hän", "häneen", "hänellä", "hänelle", "häneltä", "hänen", "hänessä", "hänestä", "hänet", "häntä", "he", "heidän", "heidät", "heihin", "heillä", "heille", "heiltä", "heissä", "heistä", "heitä", "hlö", "hlöä", "oikein", "http", "hyvin", "ilman", "itse", "ja", "jälkeen", "johon", "joiden", "joihin", "joiksi", "joilla", "joille", "joilta", "joina", "joissa", "joista", "joita", "joka", "joka", "joksi", "jolla", "jolle", "jolta", "jona", "jonka", "jos", "jossa", "josta", "jota", "jotka", "kai", "kaikki", "kanssa", "kaukana", "keiden", "keihin", "keiksi", "keillä", "keille", "keiltä", "keinä", "keissä", "keistä", "keitä", "keneen", "keneksi", "kenellä", "kenelle", "keneltä", "kenen", "kenenä", "kenessä", "kenestä", "kenet", "kenties", "keskellä", "kesken", "ketä", "ketkä", "ketkä", "koska", "koskaan", "kuin", "kuinka", "kuka", "kun", "kyllä", "lähellä", "läpi", "liian", "lla", "luona", "me", "meidän", "meidät", "meihin", "meillä", "meille", "meiltä", "meissä", "meistä", "meitä", "mihin", "mikä", "miksi", "millä", "mille", "milloin", "milloinkaan", "miltä", "minä", "minkä", "minua", "minulla", "minulle", "minulta", "minun", "minussa", "minusta", "minut", "minuun", "missä", "mistä", "mitä", "miten", "mitkä", "mukaan", "mutta", "muut", "näiden", "näihin", "näiksi", "näillä", "näille", "näiltä", "näinä", "näissä", "näistä", "näitä", "nämä", "ne", "niiden", "niihin", "niiksi", "niillä", "niille", "niiltä", "niin", "niinä", "niissä", "niistä", "niitä", "noiden", "noihin", "noiksi", "noilla", "noille", "noilta", "noin", "noina", "noissa", "noista", "noita", "nopeasti", "nuo", "nyt", "oikea", "oikealla", "ole", "olemme", "olen", "olet", "olette", "oli", "olimme", "olin", "olisi", "olisimme", "olisin", "olisit", "olisitte", "olisivat", "olit", "olitte", "olivat", "olla", "olleet", "ollut", "on", "ovat", "paljon", "poikki", "puh", "saa", "saada", "se", "sekä", "sen", "siellä", "siihen", "siinä", "siitä", "siksi", "sillä", "sille", "siltä", "sinä", "sinua", "sinulla", "sinulle", "sinulta", "sinun", "sinussa", "sinusta", "sinut", "sinuun", "sitä", "ssa", "sta", "suoraan", "tähän", "tai", "takana", "takia", "täksi", "tällä", "tälle", "tältä", "tämä", "tämän", "tänä", "tässä", "tästä", "tätä", "te", "teidän", "teidät", "teihin", "teillä", "teille", "teiltä", "teissä", "teistä", "teitä", "tms", "tuo", "tuoda", "tuohon", "tuoksi", "tuolla", "tuolle", "tuolta", "tuon", "tuona", "tuossa", "tuosta", "tuota", "vaan", "vähän", "vähemmän", "vai", "vain", "vaikka", "vasen", "vasemmalla", "vastan", "vielä", "vieressä", "voi", "voida", "voit", "www", "yhdessä", "yli", "ylös", "yms", "com", "fax", "klo", "myös", "muuta", "viim", "asti", "sis", "koko", "alle", "joskus", "sivu", "paitsi", "sitten", "tule", "auki", "paras", "lue", "lisää", "joko", "ihan", "saat", "ei", "html") # finnish stopwords
 removeSpecials <- function(x) gsub("[^0-9a-zA-ZäÄöÖåÅ ]", "", x) # function to remove special chars
-kNum <- 5 # number of topics
+kNum <- 10 # number of topics
 
 # Set working dir to load data
 setwd(dataDir)
@@ -96,18 +93,18 @@ for(h in corplist) {
   rownames(dtm) <- headings
   
   #Topic Modeling
-  for (k in 2:kNum) {
+  for (k in 5:kNum) {
     x <- assign(paste0("ldaOut-", h, "-k", k), LDA(dtm, k, method="Gibbs", control=list(nstart=nstart, seed = seed, best = best, burnin = burnin, iter = iter, thin=thin)))
     for (t in 3:termNum) {
       x.topics <- assign(paste0("ldaOut-", h, "-k", k, ".topics"), as.matrix(topics(x)))
       x.terms <- assign(paste0("ldaOut-", h, "-k", k, "-t", t, ".terms"), as.matrix(terms(x, t)))
       write.csv(x.topics, file = paste("LDA - ", h, "-", k, "topics-", t, "terms - DocsToTopics.csv", sep = " "))
       write.csv(x.terms, file = paste("LDA - ", h, "-", k, "topics-", t, "terms - TopicsToTerms.csv"))
-      
     }
   }
 }
 
+???library(igraph)
 
 # Remove empty documents from corpus to prevent errors during modeling
 #rows.sum = apply(dtm, 1, sum)
