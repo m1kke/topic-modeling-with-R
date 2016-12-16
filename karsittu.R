@@ -4,30 +4,28 @@ library(topicmodels) # for for topic modeling
 library(SnowballC) # for stemming
 library(textcat) # for language detection
 library(wordcloud) # for wordclouds
-
+library(XLConnect) # for reading excel (xlsx doesnt get dates right)
 
 # Create variables
-#dataDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/data"
-#resultsDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/results"
-dataDir <- "C:/Users/mikkok/Desktop/CSC projekti/topic-modeling-with-R/data"
-resultsDir <- "C:/Users/mikkok/Desktop/CSC projekti/topic-modeling-with-R//results"
+dataDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/data"
+resultsDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/results"
+metaDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R"
 burnin <- 4000
 iter <- 2000
 thin <- 500
 seed <-list(2003,5,63,100001,765)
 nstart <- 5
 best <- TRUE
-t <- 5 # number of terms per topic
+t <- 7 # number of terms per topic
 suomiStops <- c("aina", "alla", "ehkä", "eivät", "emme", "en", "enemmän", "ennen", "et", "että", "ette", "hän", "häneen", "hänellä", "hänelle", "häneltä", "hänen", "hänessä", "hänestä", "hänet", "häntä", "he", "heidän", "heidät", "heihin", "heillä", "heille", "heiltä", "heissä", "heistä", "heitä", "hlö", "hlöä", "oikein", "http", "hyvin", "ilman", "itse", "ja", "jälkeen", "johon", "joiden", "joihin", "joiksi", "joilla", "joille", "joilta", "joina", "joissa", "joista", "joita", "joka", "joka", "joksi", "jolla", "jolle", "jolta", "jona", "jonka", "jos", "jossa", "josta", "jota", "jotka", "kai", "kaikki", "kanssa", "kaukana", "keiden", "keihin", "keiksi", "keillä", "keille", "keiltä", "keinä", "keissä", "keistä", "keitä", "keneen", "keneksi", "kenellä", "kenelle", "keneltä", "kenen", "kenenä", "kenessä", "kenestä", "kenet", "kenties", "keskellä", "kesken", "ketä", "ketkä", "ketkä", "koska", "koskaan", "kuin", "kuinka", "kuka", "kun", "kyllä", "lähellä", "läpi", "liian", "lla", "luona", "me", "meidän", "meidät", "meihin", "meillä", "meille", "meiltä", "meissä", "meistä", "meitä", "mihin", "mikä", "miksi", "millä", "mille", "milloin", "milloinkaan", "miltä", "minä", "minkä", "minua", "minulla", "minulle", "minulta", "minun", "minussa", "minusta", "minut", "minuun", "missä", "mistä", "mitä", "miten", "mitkä", "mukaan", "mutta", "muut", "näiden", "näihin", "näiksi", "näillä", "näille", "näiltä", "näinä", "näissä", "näistä", "näitä", "nämä", "ne", "niiden", "niihin", "niiksi", "niillä", "niille", "niiltä", "niin", "niinä", "niissä", "niistä", "niitä", "noiden", "noihin", "noiksi", "noilla", "noille", "noilta", "noin", "noina", "noissa", "noista", "noita", "nopeasti", "nuo", "nyt", "oikea", "oikealla", "ole", "olemme", "olen", "olet", "olette", "oli", "olimme", "olin", "olisi", "olisimme", "olisin", "olisit", "olisitte", "olisivat", "olit", "olitte", "olivat", "olla", "olleet", "ollut", "on", "ovat", "paljon", "poikki", "puh", "saa", "saada", "se", "sekä", "sen", "siellä", "siihen", "siinä", "siitä", "siksi", "sillä", "sille", "siltä", "sinä", "sinua", "sinulla", "sinulle", "sinulta", "sinun", "sinussa", "sinusta", "sinut", "sinuun", "sitä", "ssa", "sta", "suoraan", "tähän", "tai", "takana", "takia", "täksi", "tällä", "tälle", "tältä", "tämä", "tämän", "tänä", "tässä", "tästä", "tätä", "te", "teidän", "teidät", "teihin", "teillä", "teille", "teiltä", "teissä", "teistä", "teitä", "tms", "tuo", "tuoda", "tuohon", "tuoksi", "tuolla", "tuolle", "tuolta", "tuon", "tuona", "tuossa", "tuosta", "tuota", "vaan", "vähän", "vähemmän", "vai", "vain", "vaikka", "vasen", "vasemmalla", "vastan", "vielä", "vieressä", "voi", "voida", "voit", "www", "yhdessä", "yli", "ylös", "yms", "com", "fax", "klo", "myös", "muuta", "viim", "asti", "sis", "koko", "alle", "joskus", "sivu", "paitsi", "sitten", "tule", "auki", "paras", "lue", "lisää", "joko", "ihan", "saat", "ei", "html") # finnish stopwords
 removeSpecials <- function(x) gsub("[^0-9a-zA-ZäÄöÖåÅ ]", "", x) # function to remove special chars
 k <- 4 # number of topics
 
 # Ladataan metadata-excel
-metaDir <- "C:/Users/mikkok/Desktop/CSC projekti/topic-modeling-with-R/"
 setwd(metaDir)
 
-library(xlsx)
-metadata <- read.xlsx("aineisto-metadata.xlsx", sheetName = "Sheet1", header = TRUE, as.data.frame = T, encoding = "UTF-8", colClasses = c("integer", "character", "character", "integer", "character", "Date", "character", "character", "character", "character"))
+metadata_wb <- loadWorkbook("aineisto-metadata.xlsx")
+metadata <- readWorksheet(metadata_wb, sheet = "Sheet1", header = T, colTypes = c("integer", "character", "character", "character", "character", "Date", "character", "character", "character", "character"))
 
 # Set working dir to load data
 setwd(dataDir)
@@ -110,12 +108,12 @@ for(h in corplist) {
   write.csv(x.terms, file = paste(h, "-", k, "topics -", t, "terms - Teemojen termit.csv"))
   
   x.topicProbabilities <- as.data.frame(x@gamma)
-  write.csv(x.topicProbabilities, file = paste(h, "-", k, "topics -", t, "terms - TopicProbabilities.csv"))
+  write.csv(x.topicProbabilities, file = paste(h, "-", k, "topics -", t, "terms - Topic Probabilities.csv"))
   
   x.topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(x.topicProbabilities[x,])[k]/sort(x.topicProbabilities[x,])[k - 1])
   x.topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(x.topicProbabilities[x,])[k - 1]/sort(x.topicProbabilities[x,])[k - 2])
-  write.csv(x.topic1ToTopic2, file = paste(h, "-", k, "topics -", t, "terms - Topic1ToTopic2.csv"))
-  write.csv(x.topic2ToTopic3, file = paste(h, "-", k, "topics -", t, "terms - Topic2ToTopic3.csv"))
+  write.csv(x.topic1ToTopic2, file = paste(h, "-", k, "topics -", t, "terms - Topic1 To Topic2.csv"))
+  write.csv(x.topic2ToTopic3, file = paste(h, "-", k, "topics -", t, "terms - Topic2 To Topic3.csv"))
   
   # Luodaan dataframe, johon tallennetaan dokumentin nimi ja todennäköisyydet, tallennetaan se muuttujaan
   df <- as.data.frame(x@documents)
@@ -145,17 +143,13 @@ topicprob <- rbind(finnish.corp_df, english.corp_df, swedish.corp_df)
 write.csv(topicprob, file = "Kaikki kielet - Dokumentit ja todennäköisyydet.csv")
 
 # Tallenna yksittäiset topicprobit
-write.csv(english.corp_df, file = "English - Dokumentit ja todennäköisyydet.csv")
-write.csv(finnish.corp_df, file = "Finnish - Dokumentit ja todennäköisyydet.csv")
-write.csv(swedish.corp_df, file = "Swedish - Dokumentit ja todennäköisyydet.csv")
+write.csv(english.corp_df, file = "english.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
+write.csv(finnish.corp_df, file = "finnish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
+write.csv(swedish.corp_df, file = "swedish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
 
 # Yhdistä topicprob dokumenttien metadataan
 full_metadata <- merge(x = metadata, y = topicprob, by.x = "tiedostonnimi.txt", by.y = "Dokumentti", all.x = T)
 
 # Tallenna täysi metadata
-write.xlsx(full_metadata, "Full Metadata (unclean).xlsx")
-
-
-
-
-
+library(xlsx) # for writing excel
+write.xlsx(full_metadata, "Full Metadata (unclean).xlsx", showNA = F)
