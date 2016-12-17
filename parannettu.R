@@ -37,10 +37,20 @@ emptya <- a[file.info(a)[["size"]] == 0]
 unlink(emptya)
 
 #Get filenames
-filenames <- list.files(dataDir)
+filenames <- list.files()
 
 # Load files into Corpus
 docs <- Corpus(DirSource(getwd()))
+
+# Annetaan dokumenteille kielitunniste metadatan perusteella
+kielijadoc <- metadata[c(2,9)]
+for (i in 1:length(kielijadoc$tiedostonnimi.txt)) {
+  for (j in 1:length(docs)) {
+    if (kielijadoc$tiedostonnimi.txt[[i]] %in% docs[[j]]$meta$id) {
+      docs[[j]]$meta$language = kielijadoc$Alkup.kieli[i]
+      }
+  }
+}
 
 # Clean data
 docs <- tm_map(docs, content_transformer(tolower)) # Convert to lower case
@@ -55,21 +65,21 @@ docs <- tm_map(docs, stripWhitespace) # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument) # Turn into plaintext document
 
 # Detect document language and save it into the metadata
-for (i in 1:length(docs)) {
-  rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
-  if (!is.table(rowname)) {
-    rowname <- attr(rowname, "names")
-    docs[[i]]$meta$language = rowname
-  }
-  else {
-    docs[[i]]$meta$language = rownames(rowname)[1]
-  }
-}
+# for (i in 1:length(docs)) {
+#   rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
+#   if (!is.table(rowname)) {
+#     rowname <- attr(rowname, "names")
+#     docs[[i]]$meta$language = rowname
+#   }
+#   else {
+#     docs[[i]]$meta$language = rownames(rowname)[1]
+#   }
+# }
 
 # Loop through documents to list all found languages, extract unique languages
-lanlist <- list()
-for (i in 1:length(docs)) { lanlist[i] <- docs[[i]]$meta$language }
-unilist <- unique(lanlist)
+langlist <- list()
+for (i in 1:length(docs)) { langlist[i] <- docs[[i]]$meta$language }
+unilist <- unique(langlist)
 
 # Save filenames in heading metadata
 for (doc in 1:length(docs)) {
