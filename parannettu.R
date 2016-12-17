@@ -8,9 +8,6 @@ library(XLConnect) # for reading excel (xlsx doesnt get dates right)
 
 # Create variables
 baseDir <- "C:/Users/Mikko/Data Analysis Projects/topic-modeling-with-R"
-dataDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/data"
-resultsDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R/results"
-metaDir <- "C:/Users/Mikko/Desktop/topic-modeling-with-R"
 burnin <- 4000
 iter <- 2000
 thin <- 500
@@ -23,13 +20,16 @@ removeSpecials <- function(x) gsub("[^0-9a-zA-ZäÄöÖåÅ ]", "", x) # function to r
 k <- 4 # number of topics
 
 # Ladataan metadata-excel
-setwd(metaDir)
+
+setwd(baseDir)
+setwd("data/meta")
 
 metadata_wb <- loadWorkbook("aineisto-metadata.xlsx")
 metadata <- readWorksheet(metadata_wb, sheet = "Sheet1", header = T, colTypes = c("integer", "character", "character", "character", "character", "Date", "character", "character", "character", "character"))
 
 # Set working dir to load data
-setwd(dataDir)
+setwd(baseDir)
+setwd("data/docs")
 
 # Remove empty documents so they don't cause problems later
 a <- dir(dataDir)
@@ -84,7 +84,8 @@ for (j in 1:length(unilist)){
 }
 
 # Change workdir to results folder
-setwd(resultsDir)
+setwd(baseDir)
+setwd("results")
 
 # Topic modeling
 for(h in corplist) {
