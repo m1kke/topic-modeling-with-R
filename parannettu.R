@@ -110,7 +110,9 @@ for(h in corplist) {
   write.csv(x.terms, file = paste(h, "-", k, "topics -", t, "terms - Teemojen termit.csv"))
   
   x.topicProbabilities <- as.data.frame(x@gamma)
-  write.csv(x.topicProbabilities, file = paste(h, "-", k, "topics -", t, "terms - Topic Probabilities.csv"))
+  
+  # commented to avoid duplicate with Dokumentit ja todennäköisyydet.csv
+  #write.csv(x.topicProbabilities, file = paste(h, "-", k, "topics -", t, "terms - Topic Probabilities.csv"))
   
   x.topic1ToTopic2 <- lapply(1:nrow(dtm), function(x) sort(x.topicProbabilities[x,])[k]/sort(x.topicProbabilities[x,])[k - 1])
   x.topic2ToTopic3 <- lapply(1:nrow(dtm), function(x) sort(x.topicProbabilities[x,])[k - 1]/sort(x.topicProbabilities[x,])[k - 2])
