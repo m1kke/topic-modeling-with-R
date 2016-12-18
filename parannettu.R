@@ -64,18 +64,6 @@ docs <- tm_map(docs, stemDocument) # Stem documents
 docs <- tm_map(docs, stripWhitespace) # Strip whitespace
 #docs <- tm_map(docs, PlainTextDocument) # Turn into plaintext document
 
-# Detect document language and save it into the metadata
-# for (i in 1:length(docs)) {
-#   rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
-#   if (!is.table(rowname)) {
-#     rowname <- attr(rowname, "names")
-#     docs[[i]]$meta$language = rowname
-#   }
-#   else {
-#     docs[[i]]$meta$language = rownames(rowname)[1]
-#   }
-# }
-
 # Loop through documents to list all found languages, extract unique languages
 langlist <- list()
 for (i in 1:length(docs)) { langlist[i] <- docs[[i]]$meta$language }
@@ -153,15 +141,12 @@ for(h in corplist) {
 }
 
 # Yhdistä topic + probability data framet
-topicprob <- rbind(finnish.corp_df, english.corp_df, swedish.corp_df)
-topicprob <- rbind(fi.corp_df, sw.corp_df)
+topicprob <- rbind(fi.corp_df, sw.corp_df, en.corp_df)
 write.csv(topicprob, file = "Kaikki kielet - Dokumentit ja todennäköisyydet.csv")
 
 # Tallenna yksittäiset topicprobit
-write.csv(english.corp_df, file = "english.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
-#fi tai finnish
+write.csv(en.corp_df, file = "english.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
 write.csv(fi.corp_df, file = "finnish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
-#sw tai swedish
 write.csv(sw.corp_df, file = "swedish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
 
 # Yhdistä topicprob dokumenttien metadataan
