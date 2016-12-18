@@ -5,8 +5,4 @@ Remember to create folders for raw data (dataDir) and results (resultsDir) and c
 
 Required folder structure:
 
-Project base dir
-|-Data
-|--Docs
-|--Meta
-|-Results
+Project base directory should have folders data and results. Data folder should have folders docs and meta.
