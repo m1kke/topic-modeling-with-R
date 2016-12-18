@@ -42,39 +42,29 @@ filenames <- list.files()
 # Load files into Corpus
 docs <- Corpus(DirSource(getwd()))
 
-# Annetaan dokumenteille kielitunniste metadatan perusteella
-kielijadoc <- metadata[c(2,9)]
-for (i in 1:length(kielijadoc$tiedostonnimi.txt)) {
-  for (j in 1:length(docs)) {
-    if (kielijadoc$tiedostonnimi.txt[[i]] %in% docs[[j]]$meta$id) {
-      docs[[j]]$meta$language = kielijadoc$Alkup.kieli[i]
-      }
-  }
-}
-
 # Clean data
 docs <- tm_map(docs, content_transformer(tolower)) # Convert to lower case
 docs <- tm_map(docs, removePunctuation) # Remove punctuation
-#docs <- tm_map(docs, removeSpecials) # Remove special chars
+docs <- tm_map(docs, removeSpecials) # Remove special chars
 docs <- tm_map(docs, removeNumbers) # Remove numbers
 docs <- tm_map(docs, removeWords, stopwords("english")) # Remove english stopwords
 docs <- tm_map(docs, removeWords, suomiStops) # Remove finnish stopwords (by Heikki Hyppänen http://www.nettiapina.fi/wp-content/uploads/2007/04/fi_stopwords.txt)
 docs <- tm_map(docs, removeWords, stopwords("swedish")) # Remove swedish stopwords
 docs <- tm_map(docs, stemDocument) # Stem documents
 docs <- tm_map(docs, stripWhitespace) # Strip whitespace
-#docs <- tm_map(docs, PlainTextDocument) # Turn into plaintext document
+docs <- tm_map(docs, PlainTextDocument) # Turn into plaintext document
 
 # Detect document language and save it into the metadata
-# for (i in 1:length(docs)) {
-#   rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
-#   if (!is.table(rowname)) {
-#     rowname <- attr(rowname, "names")
-#     docs[[i]]$meta$language = rowname
-#   }
-#   else {
-#     docs[[i]]$meta$language = rownames(rowname)[1]
-#   }
-# }
+for (i in 1:length(docs)) {
+  rowname <- sort(table(textcat(docs[[i]]$content)), decreasing=T)
+  if (!is.table(rowname)) {
+    rowname <- attr(rowname, "names")
+    docs[[i]]$meta$language = rowname
+  }
+  else {
+    docs[[i]]$meta$language = rownames(rowname)[1]
+  }
+}
 
 # Loop through documents to list all found languages, extract unique languages
 langlist <- list()
@@ -154,15 +144,12 @@ for(h in corplist) {
 
 # Yhdistä topic + probability data framet
 topicprob <- rbind(finnish.corp_df, english.corp_df, swedish.corp_df)
-topicprob <- rbind(fi.corp_df, sw.corp_df)
 write.csv(topicprob, file = "Kaikki kielet - Dokumentit ja todennäköisyydet.csv")
 
 # Tallenna yksittäiset topicprobit
 write.csv(english.corp_df, file = "english.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
-#fi tai finnish
-write.csv(fi.corp_df, file = "finnish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
-#sw tai swedish
-write.csv(sw.corp_df, file = "swedish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
+write.csv(finnish.corp_df, file = "finnish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
+write.csv(swedish.corp_df, file = "swedish.corp - Dokumentit ja todennäköisyydet (Topic Probabilities).csv")
 
 # Yhdistä topicprob dokumenttien metadataan
 full_metadata <- merge(x = metadata, y = topicprob, by.x = "tiedostonnimi.txt", by.y = "Dokumentti", all.x = T)
